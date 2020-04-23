@@ -44,7 +44,8 @@ public class GatewayApplication {
                                 .stripPrefix(1)
                                 .hystrix(config -> config   // 对path()指定的请求使用熔断器
                                         .setName("mycmd")   // 熔断器的名字
-                                        .setFallbackUri("forward:/fallback")))  // 熔断到 /fallback, 就是上面配制的那个
+                                        .setFallbackUri("forward:/fallback"))
+                                        )  // 熔断到 /fallback, 就是上面配制的那个
                         .uri("lb://provider"))  // 将请求路由到指定目标, lb开头是注册中心中的服务
                 .build();
     }
