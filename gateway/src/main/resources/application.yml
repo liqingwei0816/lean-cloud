@@ -7,6 +7,12 @@ spring:
     nacos:
       discovery:
         server-addr: 127.0.0.1:8848
+        group: dev
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
 management:
   endpoints:
     web:
@@ -14,4 +20,4 @@ management:
         include: gateway
 logging:
   level:
-    root: debug
+    root: info
