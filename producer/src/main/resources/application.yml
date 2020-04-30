@@ -1,0 +1,17 @@
+server:
+  port: 9091
+spring:
+  application:
+    name: provider
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 10.3.1.16:8848
+        #group: dev
+
+
+
+#server.servlet.context-path=/provider
+logging:
+  level:
+    root: info
