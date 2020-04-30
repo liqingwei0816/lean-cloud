@@ -1,15 +1,25 @@
 package com.gateway;
 
+import com.alibaba.nacos.api.NacosFactory;
+import com.alibaba.nacos.api.config.ConfigService;
+import com.alibaba.nacos.api.config.listener.Listener;
+import com.alibaba.nacos.api.exception.NacosException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
+import java.util.Properties;
+import java.util.concurrent.Executor;
+
 @SpringBootApplication
 @EnableDiscoveryClient
 @RestController
+@Slf4j
 public class GatewayApplication {
 
     //熔断反馈
@@ -20,8 +30,37 @@ public class GatewayApplication {
     }
 
     public static void main(String[] args) {
-        SpringApplication.run(GatewayApplication.class, args);
+        ConfigurableApplicationContext application = SpringApplication.run(GatewayApplication.class, args);
+
+        String serverAddr =application.getEnvironment().getProperty("spring.cloud.nacos.config.server-addr");
+        String dataId = "gateway";
+        String group = application.getEnvironment().getProperty("spring.cloud.nacos.config.group");
+        Properties properties = new Properties();
+        properties.put("serverAddr", serverAddr);
+        try {
+            ConfigService configService = NacosFactory.createConfigService(properties);
+            String content = configService.getConfig(dataId, group, 5000);
+            configService.addListener(dataId, group, new Listener() {
+                @Override
+                public void receiveConfigInfo(String configInfo) {
+                    System.out.println("recieve1:" + configInfo);
+                }
+                @Override
+                public Executor getExecutor() {
+                    return null;
+                }
+            });
+            System.out.println(content);
+        } catch (NacosException e) {
+            log.error("Nacos配置监听失败",e);
+        }
+
+
     }
+
+
+
+
 
    /* @Bean
     public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
