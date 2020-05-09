@@ -1,6 +1,7 @@
 package com.producer;
 
 import org.springframework.context.ApplicationContext;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -15,8 +16,8 @@ public class TestController {
     private ApplicationContext applicationContext;
 
     @RequestMapping("sayHi")
-    public String sayHi(String name){
-        return "Hi "+name;
+    public String sayHi(@RequestBody Map<String,String> name){
+        return "Hi "+name.get("name");
     }
     @RequestMapping("provider/sayHi")
     public String sayHi1(String name){
