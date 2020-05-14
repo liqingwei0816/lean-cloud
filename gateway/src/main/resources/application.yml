@@ -8,6 +8,10 @@ spring:
       discovery:
         server-addr: 10.3.1.16:8848
         #group: dev
+      config:
+        name: gateway
+        server-addr: 10.3.1.16:8848
+        group: dev
     gateway:
       discovery:
         locator:
