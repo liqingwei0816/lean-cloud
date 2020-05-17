@@ -8,9 +8,19 @@ spring:
       discovery:
         server-addr: 10.3.1.16:8848
         #group: dev
+    sentinel:
+      transport:
+        port: 8719
+        dashboard: localhost:8080
 
-
-
+      datasource:
+        ds1:
+          nacos:
+            server-addr: 10.3.1.16:8848
+            data-id: sentinelConfig
+            group-id: dev
+            data-type: json
+            rule-type: degrade
 #server.servlet.context-path=/provider
 logging:
   level:

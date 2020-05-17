@@ -1,5 +1,6 @@
 package com.producer;
 
+import com.alibaba.csp.sentinel.annotation.SentinelResource;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +17,7 @@ public class TestController {
     private ApplicationContext applicationContext;
 
     @RequestMapping("sayHi")
+    @SentinelResource("sayHi")
     public String sayHi(@RequestBody Map<String,String> name){
         return "Hi "+name.get("name");
     }

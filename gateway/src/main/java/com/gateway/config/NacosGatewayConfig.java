@@ -11,12 +11,8 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.cloud.gateway.event.EnableBodyCachingEvent;
 import org.springframework.cloud.gateway.filter.AdaptCachedBodyGlobalFilter;
-import org.springframework.cloud.gateway.filter.FilterDefinition;
-import org.springframework.cloud.gateway.filter.factory.GatewayFilterFactory;
 import org.springframework.cloud.gateway.route.RouteDefinition;
 import org.springframework.cloud.gateway.route.RouteDefinitionRepository;
-import org.springframework.cloud.gateway.route.RouteDefinitionRouteLocator;
-import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
@@ -49,11 +45,11 @@ public class NacosGatewayConfig implements ApplicationRunner {
             @Override
             public void receiveConfigInfo(String configInfo) {
                 routeConfig(configInfo);
-                log.error("配置信息修改：\n" + configInfo);
+                log.info("配置信息修改：\n" + configInfo);
             }
         });
         routeConfig(configInfo);
-        log.error("配置信息初始化：\n" + configInfo);
+        log.info("配置信息初始化：\n" + configInfo);
     }
 
     @Resource
