@@ -22,6 +22,6 @@ public class GatewayApplication {
     }
     //todo 限流 降级
     public static void main(String[] args) {
-        ConfigurableApplicationContext application = SpringApplication.run(GatewayApplication.class, args);
+        SpringApplication.run(GatewayApplication.class, args);
     }
 }

@@ -36,7 +36,6 @@ import java.util.Objects;
  * 日志打印过滤器
  */
 @Component
-@Slf4j
 public class LogFilter implements GlobalFilter, Ordered {
 
     @Override
@@ -125,7 +124,10 @@ public class LogFilter implements GlobalFilter, Ordered {
                             //记录响应数据
                             logEntity.setResponseBody(respBody);
                             //打印日志
-                            log.error(logEntity.toString());
+                            if (log.isDebugEnabled()){
+                                log.debug(logEntity.toString());
+                            }
+
                             return bufferFactory.wrap(respBody.getBytes());
                         }));
                     }

@@ -15,23 +15,25 @@ public class TestController {
     @Resource
     private ApplicationContext applicationContext;
 
+
+
     @RequestMapping("sayHi")
     public String sayHi(@RequestBody Map<String,String> name){
-        return "Hi "+name.get("name");
+        return "Hi  "+name.get("name");
     }
-    @RequestMapping("provider/sayHi")
+    @RequestMapping("sayHello")
     public String sayHi1(String name){
-        return "Hi provider "+name;
+        String property = applicationContext.getEnvironment().getProperty("gateway.version", String.class);
+
+        return "Hi provider "+name +"---"+property;
     }
     @RequestMapping("config")
     public Map<String, Object> config(String name){
         Map<String, Object> properties = new HashMap<>();
-
         String userName = applicationContext.getEnvironment().getProperty("user.name");
         Integer age = applicationContext.getEnvironment().getProperty("user.age",Integer.class);
         properties.put("userName",userName);
         properties.put("age",age);
-
         return properties;
     }
 

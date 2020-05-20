@@ -2,16 +2,27 @@ server:
   port: 9091
 spring:
   application:
-    name: provider
+    #服务名不能带下划线 否则路由失败
+    name: provider${gateway.version}
   cloud:
+    #流控
+    sentinel:
+      transport:
+        #控制台地址
+        dashboard: 10.3.1.16:8080
+      filter:
+        # 默认值为/* 簇点链路只会显示一层路径的链接
+        #关于如果url路径为/order/test1 在sentinel 中无法显示 只有路径为 /xxx 这种单层路径才会显示
+        url-patterns: /**
+    #注册中心  配置中心在bootstrap.properties中配置
     nacos:
       discovery:
         server-addr: 10.3.1.16:8848
         #group: dev
-
-
-
-#server.servlet.context-path=/provider
+        # 元数据
+        metadata: {version:"2.0"}
 logging:
   level:
     root: info
+gateway:
+  version: 0

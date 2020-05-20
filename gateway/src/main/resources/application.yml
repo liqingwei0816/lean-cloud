@@ -15,10 +15,14 @@ spring:
     gateway:
       discovery:
         locator:
-          enabled: true
+          #自动路由服务配置
+          enabled: false
           lower-case-service-id: true
+
 management:
   endpoints:
+    gateway:
+      enabled: true
     web:
       exposure:
         include: gateway

@@ -1,22 +1,16 @@
 package com.gateway.config;
 
 import com.alibaba.cloud.nacos.NacosConfigManager;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.nacos.api.config.listener.AbstractListener;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.type.CollectionLikeType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.cloud.gateway.event.EnableBodyCachingEvent;
 import org.springframework.cloud.gateway.filter.AdaptCachedBodyGlobalFilter;
-import org.springframework.cloud.gateway.filter.FilterDefinition;
-import org.springframework.cloud.gateway.filter.factory.GatewayFilterFactory;
 import org.springframework.cloud.gateway.route.RouteDefinition;
 import org.springframework.cloud.gateway.route.RouteDefinitionRepository;
-import org.springframework.cloud.gateway.route.RouteDefinitionRouteLocator;
-import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
@@ -27,6 +21,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * 监听容器启动
+ * 容器启动后需要进行的操作
+ * 现包含 动态路由配置
+ */
 @Component
 @Slf4j
 public class NacosGatewayConfig implements ApplicationRunner {
@@ -56,14 +55,9 @@ public class NacosGatewayConfig implements ApplicationRunner {
         log.error("配置信息初始化：\n" + configInfo);
     }
 
-    @Resource
-    private ObjectMapper objectMapper;
-
     private void routeConfig(String configInfo) {
-        CollectionLikeType collectionLikeType = objectMapper.getTypeFactory().constructCollectionLikeType(List.class, RouteDefinition.class);
-        try {
             //将配置转换为路由对象
-            List<RouteDefinition> routeDefinitions = objectMapper.readValue(configInfo, collectionLikeType);
+            List<RouteDefinition> routeDefinitions = JSON.parseArray(configInfo, RouteDefinition.class);
             //移除已删除的路由信息
             Set<String> idsNew = routeDefinitions.stream().map(RouteDefinition::getId).collect(Collectors.toSet());
             Flux<RouteDefinition> routeDefinitionsNow = routeDefinitionRepository.getRouteDefinitions();
@@ -75,12 +69,5 @@ public class NacosGatewayConfig implements ApplicationRunner {
             });
             //新增和更新存在的路由信息
             routeDefinitions.forEach(r -> routeDefinitionRepository.save(Mono.just(r)).subscribe());
-
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            log.error("json解析失败", e);
-        }
-
-
     }
 }
